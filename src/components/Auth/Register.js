@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const Register = () => {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [emailValid, setEmailValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     let interval;
@@ -68,6 +71,8 @@ const Register = () => {
       return;
     }
     setErrorMessage("");
+    alert("회원가입이 완료되었습니다!");
+    navigate("/login");
     console.log("회원가입 정보 :", formData);
   };
 

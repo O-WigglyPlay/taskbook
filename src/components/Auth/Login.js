@@ -9,6 +9,10 @@ const Login = () => {
     navigate("/register"); // 회원가입 페이지로 이동
   };
 
+  const handleForgot = () => {
+    navigate("/forgotpassword"); // 회원가입 페이지로 이동
+  };
+
   return (
     <LoginContainer>
       <LoginBox>
@@ -28,6 +32,10 @@ const Login = () => {
           계정이 없나요 ?{" "}
           <RegisterLink onClick={handleRegister}>회원가입</RegisterLink>
         </RegisterPrompt>
+        <ForgotPrompt>
+          비밀번호를 잊으셨나요?{" "}
+          <ForgotLink onClick={handleForgot}>비밀번호 찾기</ForgotLink>
+        </ForgotPrompt>
       </LoginBox>
     </LoginContainer>
   );
@@ -101,6 +109,21 @@ const RegisterLink = styled.a`
   text-decoration: none;
 
   &:hover {
-    text-decoration: underline;
+    cursor: pointer;
+  }
+`;
+
+const ForgotPrompt = styled.p`
+  margin-top: 10px;
+  font-size: 14px;
+`;
+
+const ForgotLink = styled.a`
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    cursor: pointer;
   }
 `;
