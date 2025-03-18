@@ -1,6 +1,7 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -12,8 +13,8 @@ const Register = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [timer, setTimer] = useState(0);
   const [isCodeSent, setIsCodeSent] = useState(false);
-  const [emailValid, setEmailValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const navigate = useNavigate();
 
@@ -39,13 +40,12 @@ const Register = () => {
 
   const handleSendCode = () => {
     if (!validateEmail(formData.email)) {
-      setEmailValid(false);
-      setErrorMessage("이메일 양식이 틀렸습니다!");
+      setEmailError("이메일 양식이 틀렸습니다!");
       return;
     }
     setIsCodeSent(true);
     setTimer(180);
-    setEmailValid(true);
+    setEmailError("");
     setErrorMessage("");
     console.log("이메일을 확인해주세요 :", formData.email);
   };
@@ -60,20 +60,39 @@ const Register = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!isVerified) {
       setErrorMessage("이메일 인증을 먼저해주세요.");
       return;
     }
+
     if (formData.password !== formData.confirmPassword) {
       setErrorMessage("비밀번호가 일치하지 않습니다.");
       return;
     }
+
+    if (!validateEmail(formData.email)) {
+      setEmailError("이메일 형식이 올바르지 않습니다.");
+      return;
+    }
+
     setErrorMessage("");
-    alert("회원가입이 완료되었습니다!");
-    navigate("/login");
-    console.log("회원가입 정보 :", formData);
+    try {
+      // 회원가입 API 호출
+      const response = await axios.post("http://localhost:5000/api/register", {
+        email: formData.email,
+        password: formData.password,
+      });
+      console.log(response.data);
+      alert("회원가입이 완료되었습니다!");
+      navigate("/login");
+    } catch (error) {
+      setErrorMessage(
+        error.response.data.message || "서버 오류가 발생했습니다."
+      );
+    }
   };
 
   const validateEmail = (email) => {
@@ -86,6 +105,7 @@ const Register = () => {
       <RegisterBox>
         <h2>회원가입</h2>
         {errorMessage && <ErrorBanner>{errorMessage}</ErrorBanner>}
+        {emailError && <ErrorBanner>{emailError}</ErrorBanner>}
         <Form onSubmit={handleSubmit}>
           <FormGroup>
             <Label htmlFor="email">아이디</Label>
